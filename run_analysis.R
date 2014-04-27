@@ -7,6 +7,7 @@ path_x_train <- paste (path, "/train/X_train.txt", sep="")
 path_y_train <- paste (path, "/train/y_train.txt", sep="")
 path_subject_train <- paste (path, "/train/subject_train.txt", sep="")
 path_features <- paste (path, "/features.txt", sep="")
+path_activity <- paste (path, "/activity_labels.txt", sep="")
 
 ## Test Data
 test_x <- read.table (path_x_test) ##Load Test data
@@ -35,9 +36,17 @@ features <- read.table (path_features)
 std_col <- grep ("std()", features[,2])
 mean_col <- grep ("mean()", features[,2])
 
-ext_table <- merge_test[, paste ("V", sort (union (mean_col, std_col)), sep="")] ##Extracts
+ext_table <- merge_data[, paste ("V", sort (union (mean_col, std_col)), sep="")] ##Extracts
 write.table (ext_table, "tidy_data_1.txt") ## Create file for Task 1
 
 print ("File tidy_data_1.txt created in your working directory")
 
+activity <- read.table (path_activity)
+
+## Use library (reshape2)
+## Extract tidy data set with the average of each variable for each activity and each subject.  
+
+melt_d <- melt (merge_data, id=c("Subject", "Activity"), measure.vars= names (merge_data[, 3:563]))
+sdata <- dcast (melt_d, Subject + Activity ~ variable, mean)
+sdata[, 1:3]
 }
